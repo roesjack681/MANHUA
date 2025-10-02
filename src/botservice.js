@@ -9,7 +9,7 @@ export class BotService {
 
     // /start
     if (text === "/start") {
-      await this.sendMessage(chatId, "欢迎来到漫画社区🌟\n请选择服务zycaaa：", [
+      await this.sendMessage(chatId, "欢迎来到漫画社区🌟\n请选择服务zycaa：", [
         [{ text: "漫画列表📋", callback_data: "list" }],
         [{ text: "联系客服🧙‍♂️", url: "https://t.me/your_support" }]
       ]);
