@@ -1,0 +1,12 @@
+name = "manhua"  
+main = "src/woker.js"       
+compatibility_date = "2025-10-02" 
+
+[[d1_databases]]
+binding = "DB"
+database_name = "worker-card"
+database_id = "a4acf8a4-9b4d-4091-81c5-5daf1a2be1d0"
+
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "bot-worker"
