@@ -27,22 +27,45 @@ export class BotService {
     // 点击漫画
     if (data?.startsWith("comic:")) {
       const fileKey = data.split(":")[1];
-      const code = await UserService.generateCode(fileKey, env);
       const payUrl = "https://free.picui.cn/free/2025/10/02/68ddfaafd340b.jpg"; // 你的支付二维码
-      await this.sendMessage(chatId, `请扫码支付漫画《${fileKey}》：
-支付完成后发送订单号验证
-卡密: ${code}
-二维码: ${payUrl}`);
+      
+      // 保存用户选择的漫画
+      await UserService.savePendingOrder(chatId, fileKey, env);
+      
+      await this.sendMessage(chatId, `📖 漫画：《${fileKey.replace(/\.[^/.]+$/, "")}》
+
+💰 请扫码支付
+${payUrl}
+
+✅ 支付完成后，请发送订单号进行验证`);
       return;
     }
 
     // 用户发送订单号
     if (text && /^\d{16,20}$/.test(text)) {
+      // 获取用户选择的漫画
+      const fileKey = await UserService.getPendingOrder(chatId, env);
+      if (!fileKey) {
+        await this.sendMessage(chatId, `❌ 请先选择要购买的漫画`);
+        return;
+      }
+      
+      // 验证订单
       const success = await UserService.checkOrder(text, env);
       if (success) {
-        await this.sendMessage(chatId, `订单 ${text} 支付成功，请使用卡密下载漫画。`);
+        // 生成卡密
+        const code = await UserService.generateCode(fileKey, env);
+        await this.sendMessage(chatId, `✅ 订单 ${text} 支付成功！
+
+🎫 您的卡密：${code}
+📦 漫画：《${fileKey.replace(/\.[^/.]+$/, "")}》
+
+⏰ 卡密有效期30分钟，请尽快使用`);
+        
+        // 清除待支付订单
+        await UserService.clearPendingOrder(chatId, env);
       } else {
-        await this.sendMessage(chatId, `订单 ${text} 未支付或验证失败，请检查后重试。`);
+        await this.sendMessage(chatId, `❌ 订单 ${text} 未支付或验证失败，请检查后重试`);
       }
       return;
     }

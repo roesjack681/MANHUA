@@ -33,9 +33,36 @@ export class UserService {
     }
   
     static async checkOrder(orderId, env) {
-      const resp = await fetch(`YOUR_ORDER_VERIFY_API?orderId=${orderId}`);
-      const data = await resp.json();
-      return data.includes(orderId);
+      // TODO: 替换成真实的订单验证接口
+      // const resp = await fetch(`https://your-real-api.com/verify?orderId=${orderId}`);
+      // const data = await resp.json();
+      // return data.success === true;
+      
+      // 模拟接口：永远返回 true
+      console.log(`验证订单: ${orderId}`);
+      return true;
+    }
+
+    // 保存用户待支付订单
+    static async savePendingOrder(chatId, fileKey, env) {
+      await env.DB.prepare(
+        "INSERT OR REPLACE INTO pending_orders (chatId, fileKey, createdAt) VALUES (?, ?, ?)"
+      ).bind(chatId.toString(), fileKey, Date.now()).run();
+    }
+
+    // 获取用户待支付订单
+    static async getPendingOrder(chatId, env) {
+      const result = await env.DB.prepare(
+        "SELECT fileKey FROM pending_orders WHERE chatId = ?"
+      ).bind(chatId.toString()).first();
+      return result?.fileKey || null;
+    }
+
+    // 清除用户待支付订单
+    static async clearPendingOrder(chatId, env) {
+      await env.DB.prepare(
+        "DELETE FROM pending_orders WHERE chatId = ?"
+      ).bind(chatId.toString()).run();
     }
   }
   
