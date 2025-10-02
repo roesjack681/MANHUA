@@ -1,7 +1,7 @@
 name = "manhua"  
 main = "src/woker.js"       
 compatibility_date = "2025-10-02" 
-
+account_id = "4f43a3ac00b9fb5c15deebf454ec156e"
 [[d1_databases]]
 binding = "DB"
 database_name = "worker-card"
