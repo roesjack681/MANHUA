@@ -1,4 +1,4 @@
-name = "manhua"  
+name = "bot-worker"  
 main = "src/worker.js"       
 compatibility_date = "2025-10-02" 
 account_id = "4f43a3ac00b9fb5c15deebf454ec156e"
